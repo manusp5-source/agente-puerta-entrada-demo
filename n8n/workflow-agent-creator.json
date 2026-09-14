@@ -1,0 +1,311 @@
+{
+  "name": "Axieria - Agent Demo Creator",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "agent-demo",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook - Form Data",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "agent-demo"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "check-company",
+              "leftValue": "={{ $json.body.company_name }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "isNotEmpty"
+              }
+            },
+            {
+              "id": "check-email",
+              "leftValue": "={{ $json.body.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "isNotEmpty"
+              }
+            },
+            {
+              "id": "check-contact",
+              "leftValue": "={{ $json.body.contact_name }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "isNotEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "validate-fields",
+      "name": "Validate Required Fields",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"status\": \"error\", \"message\": \"Campos obligatorios faltantes\" }",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "respond-error",
+      "name": "Respond - Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [680, 460]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"status\": \"ok\", \"message\": \"Recibido. Recibiras tu agente demo en minutos.\" }",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "respond-ok",
+      "name": "Respond - OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [680, 180]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json.body;\n\nconst companyName = data.company_name;\nconst website = data.website || '';\nconst notes = data.notes || '';\nconst appointments = data.appointments_per_week || 0;\n\nconst text = (website + ' ' + notes + ' ' + companyName).toLowerCase();\n\nlet sector = 'servicios profesionales';\nlet useCase = 'captacion';\nlet adjectives = 'profesional, cercano y eficiente';\nlet agentName = 'Ana';\nlet faqs = '';\n\nif (text.match(/dental|dentist|odontol|ortodoncia|clinica dental/)) {\n  sector = 'salud dental';\n  useCase = 'citas';\n  adjectives = 'profesional, tranquilizador y cercano';\n  agentName = 'Laura';\n  faqs = `1. ¿Cuánto cuesta una limpieza dental? → \"Los precios dependen del tratamiento. Nuestro equipo te dará un presupuesto personalizado en tu primera visita.\"\n2. ¿Hacéis ortodoncia invisible? → \"Sí, ofrecemos varias opciones de ortodoncia. ¿Te gustaría que agendemos una consulta de valoración?\"\n3. ¿Aceptáis seguros dentales? → \"Trabajamos con las principales aseguradoras. Dime cuál tienes y te confirmo.\"\n4. ¿Cuánto dura un blanqueamiento? → \"El tratamiento suele durar entre 45 minutos y una hora. Los resultados son visibles desde la primera sesión.\"`;\n} else if (text.match(/inmobil|real estate|vivienda|piso|alquiler|propiedad/)) {\n  sector = 'inmobiliaria';\n  useCase = 'captacion';\n  adjectives = 'profesional, persuasivo y resolutivo';\n  agentName = 'Carlos';\n  faqs = `1. ¿Tenéis pisos en zona centro? → \"Tenemos varias opciones disponibles. ¿Me dices tu presupuesto orientativo y el número de habitaciones que necesitas?\"\n2. ¿Hacéis valoraciones gratuitas? → \"Sí, valoramos tu propiedad sin compromiso. ¿Cuándo te iría bien que pasase un agente?\"\n3. ¿Cuánto tardáis en vender un piso? → \"Depende de la zona y el precio, pero de media nuestros clientes venden en menos de 3 meses.\"\n4. ¿Gestionáis el papeleo? → \"Nos encargamos de todo: contrato, notaría, registro. Tú no te preocupas de nada.\"`;\n} else if (text.match(/gym|gimnasio|fitness|deport|entren|crossfit/)) {\n  sector = 'fitness y deporte';\n  useCase = 'captacion';\n  adjectives = 'dinámico, motivador y cercano';\n  agentName = 'Alex';\n  faqs = `1. ¿Cuánto cuesta la mensualidad? → \"Tenemos varios planes según lo que busques. ¿Te gustaría que te contase las opciones?\"\n2. ¿Puedo hacer una clase de prueba? → \"¡Claro! La primera clase es gratuita. ¿Qué día te vendría bien?\"\n3. ¿Tenéis horarios de mañana? → \"Abrimos desde las 7 de la mañana. Hay clases dirigidas a todas las horas.\"\n4. ¿Hay parking? → \"Sí, tenemos parking gratuito para socios junto al centro.\"`;\n} else if (text.match(/abogad|legal|jurídic|juridic|despacho|bufete|notari/)) {\n  sector = 'servicios legales';\n  useCase = 'captacion';\n  adjectives = 'profesional, discreto y resolutivo';\n  agentName = 'Asistente del despacho';\n  faqs = `1. ¿La primera consulta es gratuita? → \"Ofrecemos una primera valoración sin compromiso para entender su caso.\"\n2. ¿En qué áreas trabajan? → \"Cubrimos derecho civil, mercantil, laboral y fiscal. ¿En qué materia necesita asesoramiento?\"\n3. ¿Cuánto tarda un proceso? → \"Los plazos varían según el tipo de procedimiento. Le daremos una estimación realista en la consulta.\"\n4. ¿Trabajan con empresas? → \"Sí, asesoramos tanto a particulares como a empresas de todos los tamaños.\"`;\n} else if (text.match(/estetic|estetica|belleza|spa|peluquer|beauty|salon/)) {\n  sector = 'estética y belleza';\n  useCase = 'citas';\n  adjectives = 'amable, profesional y cercano';\n  agentName = 'Sofía';\n  faqs = `1. ¿Qué tratamientos faciales ofrecéis? → \"Tenemos limpieza facial, hidratación profunda, radiofrecuencia y más. ¿Buscas algo específico?\"\n2. ¿Cuánto dura una sesión? → \"Depende del tratamiento, entre 30 y 90 minutos. Te lo confirmo al reservar.\"\n3. ¿Hacéis bonos? → \"Sí, tenemos packs con descuento. Nuestro equipo te explicará las opciones.\"\n4. ¿Puedo cancelar mi cita? → \"Puedes cancelar o cambiar tu cita con 24 horas de antelación sin ningún coste.\"`;\n} else if (text.match(/restauran|comida|gastro|bar|cater|food|delivery/)) {\n  sector = 'hostelería y restauración';\n  useCase = 'citas';\n  adjectives = 'amable, eficiente y servicial';\n  agentName = 'María';\n  faqs = `1. ¿Tenéis menú del día? → \"Sí, cambiamos el menú cada día. ¿Quieres que te cuente el de hoy?\"\n2. ¿Se puede reservar mesa? → \"Por supuesto. ¿Para cuántas personas y qué día?\"\n3. ¿Hacéis eventos privados? → \"Sí, organizamos eventos y celebraciones. Nuestro equipo te prepara un presupuesto.\"\n4. ¿Tenéis opciones veganas? → \"Siempre tenemos opciones veganas y sin gluten en la carta.\"`;\n} else if (text.match(/tech|software|saas|digital|app|desarrollo|programac/)) {\n  sector = 'tecnología';\n  useCase = 'captacion';\n  adjectives = 'técnico, claro y orientado a resultados';\n  agentName = 'Asistente de ' + companyName;\n  faqs = `1. ¿Ofrecéis demo del producto? → \"Sí, podemos agendar una demo personalizada. ¿Cuál es vuestra necesidad principal?\"\n2. ¿Cuánto tarda la implementación? → \"Depende del alcance, pero la mayoría de clientes están operativos en menos de 2 semanas.\"\n3. ¿Tenéis soporte técnico? → \"Sí, soporte por email y chat en horario laboral, y urgencias 24/7.\"\n4. ¿Se integra con nuestros sistemas? → \"Nos integramos con las principales herramientas del mercado. Cuéntame qué usáis.\"`;\n} else {\n  faqs = `1. ¿Cuáles son vuestros horarios? → \"Nuestro equipo te confirmará los horarios exactos. ¿Quieres que te llamen?\"\n2. ¿Dónde estáis ubicados? → \"Nuestro equipo te dará la dirección exacta y cómo llegar.\"\n3. ¿Hacéis presupuestos sin compromiso? → \"Sí, el primer presupuesto es gratuito y sin compromiso.\"\n4. ¿Cómo puedo contactar con vosotros? → \"Te paso con nuestro equipo ahora mismo. ¿Me das tu nombre y teléfono?\"`;\n}\n\nlet useCaseBlock = '';\nif (useCase === 'citas') {\n  useCaseBlock = `1. Saluda y pregunta para qué servicio quieren cita\n2. Recoge nombre, preferencia de día/hora y datos de contacto\n3. Confirma la petición y di que el equipo confirmará por WhatsApp o email`;\n} else if (useCase === 'captacion') {\n  useCaseBlock = `1. Saluda y presenta brevemente ${companyName}\n2. Genera interés en el servicio/producto\n3. Recoge nombre, teléfono y necesidad concreta\n4. Confirma que el equipo se pondrá en contacto en menos de 24h`;\n} else {\n  useCaseBlock = `1. Saluda en nombre de ${companyName} y pregunta en qué puedes ayudar\n2. Identifica la necesidad del cliente\n3. Resuelve con la información disponible o recoge datos para que el equipo humano contacte\n4. Cierra con siguiente paso claro`;\n}\n\nconst prompt = `# Personalidad\n\nEres el asistente de voz de ${companyName}, especializado en ${sector}.\nEres ${adjectives}.\nTu nombre es ${agentName}.\nIMPORTANTE: Habla SIEMPRE en español, sin excepción, independientemente del idioma en que te hablen.\n\n# Entorno\n\nAtiendes llamadas de clientes potenciales o actuales interesados en ${sector}.\nLas conversaciones son por voz, por lo que tus respuestas deben ser cortas y naturales.\n\n# Goal\n\n${useCaseBlock}\n\n# Tono\n\nProfesional pero cercano. Respuestas de máximo 2-3 frases por turno.\nHabla siempre en español neutro. Adapta el registro al sector.\nNunca leas listas en voz alta: integra la información en frases naturales.\n\n# Guardrails\n\nNunca inventes precios, disponibilidad ni compromisos específicos.\nSi no sabes algo, di: \"Eso te lo confirma directamente nuestro equipo, ¿te llaman hoy mismo?\"\nNo hagas más de una pregunta por turno.\nSi el usuario se pone agresivo o el tema es irrelevante, redirige con calma a la función principal.\n\n# FAQs simuladas para ${sector}\n\n${faqs}`;\n\nconst firstMessage = `¡Hola! Soy ${agentName}${agentName.startsWith('Asistente') ? '' : ', el asistente'} de ${companyName}. ¿En qué puedo ayudarte?`;\n\nreturn {\n  json: {\n    ...data,\n    sector,\n    useCase,\n    agentName,\n    prompt,\n    firstMessage,\n    agentDisplayName: `${companyName} - Agente Demo`\n  }\n};"
+      },
+      "id": "generate-prompt",
+      "name": "Generate Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.elevenlabs.io/v1/convai/agents/create",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"name\": \"{{ $json.agentDisplayName }}\",\n  \"conversation_config\": {\n    \"agent\": {\n      \"prompt\": {\n        \"prompt\": {{ JSON.stringify($json.prompt) }}\n      },\n      \"first_message\": {{ JSON.stringify($json.firstMessage) }},\n      \"language\": \"en\"\n    },\n    \"tts\": {\n      \"voice_id\": \"HYlEvvU9GMan5YdjFYpg\",\n      \"stability\": 0.5,\n      \"similarity_boost\": 0.8\n    }\n  }\n}",
+        "options": {}
+      },
+      "id": "create-agent",
+      "name": "ElevenLabs - Create Agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 300],
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.first().json;\nconst agentId = input.agent_id;\nconst prevData = $('Generate Prompt').first().json;\n\nreturn {\n  json: {\n    agent_id: agentId,\n    demo_link: `https://elevenlabs.io/app/talk-to?agent_id=${agentId}`,\n    edit_link: `https://elevenlabs.io/app/agents/agents/${agentId}`,\n    company_name: prevData.company_name,\n    contact_name: prevData.contact_name,\n    email: prevData.email,\n    phone: prevData.phone,\n    website: prevData.website,\n    appointments_per_week: prevData.appointments_per_week,\n    notes: prevData.notes,\n    sector: prevData.sector,\n    agentName: prevData.agentName\n  }\n};"
+      },
+      "id": "build-links",
+      "name": "Build Links",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1340, 300]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "={{ $json.contact_name }}, tu agente de voz para {{ $json.company_name }} está listo",
+        "emailType": "html",
+        "message": "=<div style=\"font-family: 'Inter', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0d1a20; color: #f5f0e8; padding: 40px 32px; border-radius: 12px;\">\n  <div style=\"text-align: center; margin-bottom: 32px;\">\n    <span style=\"font-family: Georgia, serif; font-size: 24px; font-weight: 700; color: #c8b88a; letter-spacing: 4px;\">AXIERIA</span>\n  </div>\n  \n  <h1 style=\"font-family: Georgia, serif; font-size: 24px; color: #f5f0e8; text-align: center; margin-bottom: 16px;\">Tu agente de voz está listo</h1>\n  \n  <p style=\"color: #8a9ba5; text-align: center; margin-bottom: 32px;\">Hola {{ $json.contact_name }}, hemos creado un asistente de voz personalizado para <strong style=\"color: #f5f0e8;\">{{ $json.company_name }}</strong>.</p>\n  \n  <div style=\"text-align: center; margin-bottom: 32px;\">\n    <a href=\"{{ $json.demo_link }}\" style=\"display: inline-block; padding: 16px 40px; background: #c8b88a; color: #0d1a20; font-weight: 600; font-size: 16px; text-decoration: none; border-radius: 8px;\">Probar mi agente ahora</a>\n  </div>\n  \n  <p style=\"color: #8a9ba5; text-align: center; font-size: 14px; margin-bottom: 32px;\">Haz clic en el botón y habla directamente con tu asistente. Prueba a preguntar por tus servicios, horarios o pedir una cita.</p>\n  \n  <hr style=\"border: none; border-top: 1px solid rgba(200,184,138,0.15); margin: 24px 0;\">\n  \n  <p style=\"color: #8a9ba5; text-align: center; font-size: 14px;\">¿Quieres ver cómo esto podría funcionar en tu negocio real?</p>\n  \n  <div style=\"text-align: center; margin-top: 16px;\">\n    <a href=\"https://axieria.com/contacto\" style=\"display: inline-block; padding: 12px 32px; border: 1px solid #c8b88a; color: #c8b88a; font-size: 14px; text-decoration: none; border-radius: 8px;\">Agendar una llamada</a>\n  </div>\n  \n  <p style=\"color: #8a9ba5; text-align: center; font-size: 12px; margin-top: 32px;\">© 2026 Axieria — Automatización inteligente para tu negocio</p>\n</div>",
+        "options": {}
+      },
+      "id": "send-email",
+      "name": "Send Demo Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1560, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://services.leadconnectorhq.com/contacts/upsert",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"locationId\": \"f3wMHrzYc9cmEMqILHNh\",\n  \"firstName\": \"{{ $json.contact_name.split(' ')[0] }}\",\n  \"lastName\": \"{{ $json.contact_name.split(' ').slice(1).join(' ') || '' }}\",\n  \"email\": \"{{ $json.email }}\",\n  \"phone\": \"{{ $json.phone }}\",\n  \"companyName\": \"{{ $json.company_name }}\",\n  \"website\": \"{{ $json.website }}\",\n  \"source\": \"Landing Demo Agente\",\n  \"tags\": [\"demo-agente\", \"{{ $json.sector }}\"],\n  \"customFields\": [\n    {\n      \"key\": \"agent_id\",\n      \"field_value\": \"{{ $json.agent_id }}\"\n    },\n    {\n      \"key\": \"demo_link\",\n      \"field_value\": \"{{ $json.demo_link }}\"\n    },\n    {\n      \"key\": \"edit_link\",\n      \"field_value\": \"{{ $json.edit_link }}\"\n    },\n    {\n      \"key\": \"agent_status\",\n      \"field_value\": \"demo_sent\"\n    },\n    {\n      \"key\": \"appointments_per_week\",\n      \"field_value\": \"{{ $json.appointments_per_week }}\"\n    },\n    {\n      \"key\": \"sector\",\n      \"field_value\": \"{{ $json.sector }}\"\n    },\n    {\n      \"key\": \"notes\",\n      \"field_value\": \"{{ $json.notes }}\"\n    }\n  ]\n}",
+        "options": {
+          "requestHeaders": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        }
+      },
+      "id": "ghl-upsert-contact",
+      "name": "GHL - Upsert Contact",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 420],
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 3000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://services.leadconnectorhq.com/opportunities/upsert",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"locationId\": \"f3wMHrzYc9cmEMqILHNh\",\n  \"pipelineId\": \"aV8aQJSjcXzZ9W6kcfqJ\",\n  \"pipelineStageId\": \"15520b26-82ef-4957-98b9-e81da5629c02\",\n  \"contactId\": \"{{ $('GHL - Upsert Contact').first().json.contact?.id || $('GHL - Upsert Contact').first().json.id }}\",\n  \"name\": \"Demo Agente - {{ $('Build Links').first().json.company_name }}\",\n  \"status\": \"open\",\n  \"monetaryValue\": 2500\n}",
+        "options": {
+          "requestHeaders": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        }
+      },
+      "id": "ghl-create-opportunity",
+      "name": "GHL - Create Opportunity",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1780, 420],
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 3000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "sendTo": "rocio@axieria.com",
+        "subject": "=ERROR: Fallo creando agente para {{ $('Generate Prompt').first().json.company_name }}",
+        "emailType": "html",
+        "message": "=<div style=\"font-family: Arial, sans-serif; padding: 20px;\">\n  <h2 style=\"color: #e05555;\">Error al crear agente de voz</h2>\n  <p><strong>Empresa:</strong> {{ $('Generate Prompt').first().json.company_name }}</p>\n  <p><strong>Contacto:</strong> {{ $('Generate Prompt').first().json.contact_name }}</p>\n  <p><strong>Email:</strong> {{ $('Generate Prompt').first().json.email }}</p>\n  <p><strong>Error:</strong> {{ $json.error?.message || 'Error desconocido en la API de ElevenLabs' }}</p>\n  <hr>\n  <p>Revisa la ejecución en n8n o crea el agente manualmente en ElevenLabs.</p>\n</div>",
+        "options": {}
+      },
+      "id": "notify-error",
+      "name": "Notify Rocio - Error",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1340, 500]
+    }
+  ],
+  "connections": {
+    "Webhook - Form Data": {
+      "main": [
+        [
+          {
+            "node": "Validate Required Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Required Fields": {
+      "main": [
+        [
+          {
+            "node": "Respond - OK",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Generate Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond - Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Prompt": {
+      "main": [
+        [
+          {
+            "node": "ElevenLabs - Create Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ElevenLabs - Create Agent": {
+      "main": [
+        [
+          {
+            "node": "Build Links",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Links": {
+      "main": [
+        [
+          {
+            "node": "Send Demo Email",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "GHL - Upsert Contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL - Upsert Contact": {
+      "main": [
+        [
+          {
+            "node": "GHL - Create Opportunity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "name": "axieria-demo"
+    }
+  ]
+}

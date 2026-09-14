@@ -1,0 +1,99 @@
+# API Contracts — Agente Puerta de Entrada Demo
+
+## Webhook endpoint (n8n)
+
+### POST /webhook/agent-demo
+Recibe datos del formulario de la landing.
+
+**URL:** `https://n8n.manusp.site/webhook/agent-demo`
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Request body:**
+```json
+{
+  "company_name": "Clinica Dental Sonria",
+  "website": "https://clinicasonria.com",
+  "contact_name": "Maria Garcia",
+  "phone": "+34612345678",
+  "email": "maria@clinicasonria.com",
+  "appointments_per_week": 50,
+  "notes": "Especialistas en ortodoncia",
+  "source": "landing-demo"
+}
+```
+
+**Response (200):**
+```json
+{
+  "status": "ok",
+  "message": "Recibido. Recibiras tu agente demo en minutos."
+}
+```
+
+**Response (400):**
+```json
+{
+  "status": "error",
+  "message": "Campos obligatorios faltantes"
+}
+```
+
+---
+
+## ElevenLabs API — Create Agent
+
+### POST /v1/convai/agents/create
+
+**Headers:**
+```
+xi-api-key: [API_KEY]
+Content-Type: application/json
+```
+
+**Request body (generado por n8n):**
+```json
+{
+  "name": "Clinica Dental Sonria - Agente Demo",
+  "conversation_config": {
+    "agent": {
+      "prompt": {
+        "prompt": "[SYSTEM PROMPT GENERADO]"
+      },
+      "first_message": "Hola, soy el asistente de Clinica Dental Sonria. En que puedo ayudarle?",
+      "language": "en"
+    },
+    "tts": {
+      "voice_id": "HYlEvvU9GMan5YdjFYpg",
+      "stability": 0.5,
+      "similarity_boost": 0.8
+    }
+  }
+}
+```
+
+**Response (200):**
+```json
+{
+  "agent_id": "abc123xyz"
+}
+```
+
+**Links construidos:**
+- Demo: `https://elevenlabs.io/app/talk-to?agent_id=abc123xyz`
+- Edit: `https://elevenlabs.io/app/agents/agents/abc123xyz`
+
+---
+
+## GHL API — Create/Update Contact
+
+### POST /contacts/
+**Usado para crear lead en GHL con datos del formulario + agent_id**
+
+Custom fields:
+- `agent_id` — ID del agente ElevenLabs
+- `demo_link` — Link de demo
+- `agent_status` — created / sent / converted / nurturing
