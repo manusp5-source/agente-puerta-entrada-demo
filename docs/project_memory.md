@@ -14,8 +14,8 @@ Planning and scaffold creation via /init-project
 Run /start-execution to begin IT phase (infrastructure tasks)
 
 ## Blockers
-- Verificar creditos ElevenLabs disponibles antes de IT-003
-- Confirmar acceso a GHL API antes de IT-005
+- Verify available ElevenLabs credits before IT-003
+- Confirm GHL API access before IT-005
 
 ## Key context for resuming
-Sistema automatizado para Axieria: landing premium recoge datos de leads, n8n crea agentes de voz ElevenLabs personalizados, lead recibe link de demo por email. Si no convierte en 48h, GHL arranca nurturing. Stack: HTML/CSS/JS + n8n + ElevenLabs API + GHL. Paleta navy/oro premium. Voice_id fijo HYlEvvU9GMan5YdjFYpg, language: "en" en API pero prompt en espanol.
+Automated system for Axieria: a premium landing page collects lead data, n8n creates personalized ElevenLabs voice agents, lead receives the demo link by email. If they don't convert within 48h, GHL starts nurturing. Stack: HTML/CSS/JS + n8n + ElevenLabs API + GHL. Premium navy/gold palette. Fixed voice_id HYlEvvU9GMan5YdjFYpg, language: "en" in the API but prompt in Spanish.

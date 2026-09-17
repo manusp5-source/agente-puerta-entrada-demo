@@ -2,35 +2,35 @@
 Generated: 2026-04-14 | Clarity: 75%
 
 ## What it does
-Sistema end-to-end que permite a leads (clinicas, empresas) rellenar un formulario en una landing premium de Axieria, y en minutos recibir un agente de voz personalizado con ElevenLabs que pueden probar inmediatamente. El flujo es 100% automatico: formulario → n8n genera prompt por sector → API ElevenLabs crea agente → lead recibe email con link de demo. Si no convierte en 48h, GHL arranca nurturing.
+End-to-end system that lets leads (clinics, businesses) fill out a form on a premium Axieria landing page and, within minutes, receive a personalized ElevenLabs voice agent they can try immediately. The flow is 100% automatic: form → n8n generates a prompt by sector → ElevenLabs API creates the agent → lead receives an email with the demo link. If they don't convert within 48h, GHL starts nurturing.
 
 ## What it does NOT do (explicit exclusions)
-- No gestiona pagos ni facturacion
-- No entrena modelos de voz custom (usa voice_id fijo)
-- No incluye panel admin propio (se usa GHL para tracking)
-- No soporta multiples idiomas (solo espanol)
-- No incluye analytics avanzados del uso del agente
+- Does not handle payments or billing
+- Does not train custom voice models (uses a fixed voice_id)
+- Does not include its own admin panel (GHL is used for tracking)
+- Does not support multiple languages (Spanish only)
+- Does not include advanced agent usage analytics
 
 ## Integrations
-- ElevenLabs Conversational AI API — creacion de agentes de voz
-- GoHighLevel (GHL) — CRM, pipeline de leads, nurturing email sequences
-- n8n (self-hosted) — orquestacion del flujo completo
-- SMTP (via n8n o GHL) — envio de emails con link de demo
+- ElevenLabs Conversational AI API — voice agent creation
+- GoHighLevel (GHL) — CRM, lead pipeline, nurturing email sequences
+- n8n (self-hosted) — orchestration of the full flow
+- SMTP (via n8n or GHL) — sending emails with the demo link
 
 ## Users
-- **Lead/Visitante**: rellena formulario, recibe link de demo, prueba agente
-- **Rocio (equipo Axieria)**: supervisa leads en GHL, gestiona seguimiento
-- **Sistema automatico**: n8n ejecuta todo sin intervencion humana
+- **Lead/Visitor**: fills out the form, receives the demo link, tries the agent
+- **Rocio (Axieria team)**: monitors leads in GHL, manages follow-up
+- **Automated system**: n8n runs everything without human intervention
 
 ## Success criteria
-- Lead rellena formulario y recibe link de demo funcional en < 5 minutos
-- Agente de voz habla en espanol correctamente
-- Lead aparece automaticamente en pipeline de GHL
-- Nurturing arranca si no hay contacto en 48h
-- Landing se ve premium y alineada con branding Axieria
+- Lead fills out the form and receives a working demo link in < 5 minutes
+- Voice agent speaks Spanish correctly
+- Lead automatically appears in the GHL pipeline
+- Nurturing starts if there's no contact within 48h
+- Landing page looks premium and aligned with Axieria branding
 
 ## Constraints
-- ElevenLabs API requiere language: "en" (workaround documentado)
-- Creditos ElevenLabs limitados — monitorizar uso
-- Voice ID fijo: HYlEvvU9GMan5YdjFYpg
-- Landing debe usar paleta Axieria exacta
+- ElevenLabs API requires language: "en" (documented workaround)
+- Limited ElevenLabs credits — monitor usage
+- Fixed voice ID: HYlEvvU9GMan5YdjFYpg
+- Landing page must use the exact Axieria palette

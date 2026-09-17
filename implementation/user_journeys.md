@@ -1,201 +1,201 @@
 # User Journeys — Agente Puerta de Entrada Demo
 
-## UJ-001: Lead completa formulario
+## UJ-001: Lead fills out the form
 
 **Milestone:** M1
-**Actor:** Lead (visitante web / asistente a evento)
-**Trigger:** Lead accede a la landing y rellena el formulario
-**Preconditions:** Landing desplegada, webhook n8n activo
+**Actor:** Lead (web visitor / event attendee)
+**Trigger:** Lead visits the landing page and fills out the form
+**Preconditions:** Landing page deployed, n8n webhook active
 
 ### Happy path
-1. Lead accede a la landing page
-2. Ve branding premium Axieria, entiende la propuesta de valor
-3. Rellena formulario: empresa, web, contacto, telefono, email, citas/semana, notas
-4. Pulsa "Crear mi agente demo"
-5. Ve mensaje de confirmacion: "Recibiras tu agente demo en minutos"
-6. Datos llegan a n8n via webhook POST
+1. Lead visits the landing page
+2. Sees the premium Axieria branding, understands the value proposition
+3. Fills out the form: company, website, contact, phone, email, appointments/week, notes
+4. Clicks "Create my demo agent"
+5. Sees a confirmation message: "You'll receive your demo agent in minutes"
+6. Data reaches n8n via webhook POST
 
 ### Error paths
-- Campos obligatorios vacios: validacion frontend muestra error inline
-- Email invalido: validacion frontend rechaza formato
-- Webhook n8n caido: frontend muestra "Error temporal, intentalo de nuevo"
-- Formulario duplicado (mismo email): n8n detecta y actualiza en vez de crear
+- Empty required fields: frontend validation shows an inline error
+- Invalid email: frontend validation rejects the format
+- n8n webhook down: frontend shows "Temporary error, please try again"
+- Duplicate form (same email): n8n detects it and updates instead of creating
 
 ### Acceptance criteria
-- [ ] Formulario recoge los 7 campos definidos
-- [ ] Validacion frontend funciona sin JS externo
-- [ ] POST al webhook llega correctamente a n8n
-- [ ] Mensaje de confirmacion se muestra al enviar
-- [ ] Landing se ve premium en mobile y desktop
-- [ ] Paleta Axieria aplicada correctamente
+- [ ] Form collects the 7 defined fields
+- [ ] Frontend validation works without external JS
+- [ ] POST to the webhook reaches n8n correctly
+- [ ] Confirmation message shows on submit
+- [ ] Landing page looks premium on mobile and desktop
+- [ ] Axieria palette applied correctly
 
 ### Security checklist
-- [ ] No se almacenan datos en frontend (solo envio)
-- [ ] HTTPS obligatorio para el webhook
-- [ ] Input sanitizado antes de enviar
-- [ ] No hay secrets en el codigo frontend
-- [ ] Rate limiting en webhook (n8n side)
+- [ ] No data stored on the frontend (submission only)
+- [ ] HTTPS mandatory for the webhook
+- [ ] Input sanitized before sending
+- [ ] No secrets in the frontend code
+- [ ] Rate limiting on the webhook (n8n side)
 
 ---
 
-## UJ-002: Creacion automatica agente
+## UJ-002: Automatic agent creation
 
 **Milestone:** M1
-**Actor:** Sistema (n8n automatico)
-**Trigger:** Webhook recibe datos del formulario
-**Preconditions:** IT-003 (API test) y IT-004 (template prompt) completados
+**Actor:** System (automatic n8n)
+**Trigger:** Webhook receives the form data
+**Preconditions:** IT-003 (API test) and IT-004 (prompt template) completed
 
 ### Happy path
-1. n8n recibe datos via webhook
-2. Code node infiere sector y uso a partir de website + notes
-3. Code node genera system prompt usando template + datos del lead
-4. HTTP Request crea agente en ElevenLabs API (language: "en", prompt en espanol)
-5. API devuelve agent_id
-6. n8n construye demo_link y edit_link
-7. Datos del agente se pasan al siguiente paso (email)
+1. n8n receives the data via webhook
+2. Code node infers sector and use case from website + notes
+3. Code node generates the system prompt using the template + lead data
+4. HTTP Request creates the agent via the ElevenLabs API (language: "en", prompt in Spanish)
+5. API returns agent_id
+6. n8n builds demo_link and edit_link
+7. Agent data is passed to the next step (email)
 
 ### Error paths
-- API ElevenLabs devuelve error: n8n reintenta 1 vez, si falla → notifica a Rocio por email
-- API devuelve rate limit (429): esperar 60s y reintentar
-- Creditos agotados: notificar a Rocio inmediatamente
-- Prompt demasiado largo: truncar FAQs simuladas
+- ElevenLabs API returns an error: n8n retries once, if it fails → notifies Rocio by email
+- API returns rate limit (429): wait 60s and retry
+- Credits exhausted: notify Rocio immediately
+- Prompt too long: truncate the simulated FAQs
 
 ### Acceptance criteria
-- [ ] Agente se crea en < 30 segundos
-- [ ] Prompt generado es coherente con sector de la empresa
-- [ ] Agent habla en espanol a pesar de language: "en"
-- [ ] demo_link y edit_link son correctos y funcionales
-- [ ] Error handling notifica a Rocio si falla
+- [ ] Agent is created in < 30 seconds
+- [ ] Generated prompt is coherent with the company's sector
+- [ ] Agent speaks Spanish despite language: "en"
+- [ ] demo_link and edit_link are correct and functional
+- [ ] Error handling notifies Rocio on failure
 
 ### Security checklist
-- [ ] API key de ElevenLabs en n8n credentials (no hardcoded)
-- [ ] No se loguea la API key en ningun output
-- [ ] Datos del lead sanitizados antes de inyectar en prompt
+- [ ] ElevenLabs API key in n8n credentials (not hardcoded)
+- [ ] API key never logged in any output
+- [ ] Lead data sanitized before being injected into the prompt
 
 ---
 
-## UJ-003: Lead recibe demo link
+## UJ-003: Lead receives the demo link
 
 **Milestone:** M1
-**Actor:** Sistema (n8n) → Lead (recibe email)
-**Trigger:** Agente creado exitosamente (UJ-002 completado)
-**Preconditions:** Agent creado, email del lead disponible
+**Actor:** System (n8n) → Lead (receives email)
+**Trigger:** Agent created successfully (UJ-002 completed)
+**Preconditions:** Agent created, lead's email available
 
 ### Happy path
-1. n8n recibe agent_id del paso anterior
-2. Construye email con: saludo personalizado, link de demo, CTA a agendar llamada
-3. Envia email via SMTP
-4. Lead recibe email en < 2 minutos
-5. Lead hace clic en link de demo
-6. Lead prueba el agente de voz en ElevenLabs
+1. n8n receives the agent_id from the previous step
+2. Builds the email with: personalized greeting, demo link, call-booking CTA
+3. Sends the email via SMTP
+4. Lead receives the email in < 2 minutes
+5. Lead clicks the demo link
+6. Lead tries the voice agent on ElevenLabs
 
 ### Error paths
-- Email no se envia (SMTP error): reintentar 1 vez, notificar a Rocio
-- Email va a spam: usar dominio verificado, SPF/DKIM configurados
-- Link de demo no funciona: verificar agent_id antes de enviar
+- Email fails to send (SMTP error): retry once, notify Rocio
+- Email goes to spam: use a verified domain, SPF/DKIM configured
+- Demo link doesn't work: verify agent_id before sending
 
 ### Acceptance criteria
-- [ ] Email llega en < 2 minutos despues de crear agente
-- [ ] Email tiene branding Axieria (o al menos es profesional)
-- [ ] Link de demo funciona y abre el agente directamente
-- [ ] CTA a llamada es claro y natural
-- [ ] Email se ve bien en mobile y desktop
+- [ ] Email arrives in < 2 minutes after agent creation
+- [ ] Email has Axieria branding (or is at least professional)
+- [ ] Demo link works and opens the agent directly
+- [ ] Call CTA is clear and natural
+- [ ] Email looks good on mobile and desktop
 
 ### Security checklist
-- [ ] No incluir credenciales en el email
-- [ ] Link de demo es HTTPS
-- [ ] No incluir edit_link en el email al lead (solo demo_link)
+- [ ] No credentials included in the email
+- [ ] Demo link is HTTPS
+- [ ] Do not include edit_link in the email to the lead (demo_link only)
 
 ---
 
-## UJ-004: Lead en GHL
+## UJ-004: Lead in GHL
 
 **Milestone:** M2
-**Actor:** Sistema (n8n → GHL)
-**Trigger:** Formulario recibido (paralelo a UJ-002)
-**Preconditions:** IT-005 (GHL integracion) completada
+**Actor:** System (n8n → GHL)
+**Trigger:** Form received (in parallel with UJ-002)
+**Preconditions:** IT-005 (GHL integration) completed
 
 ### Happy path
-1. n8n recibe datos del formulario
-2. Busca contacto existente en GHL por email
-3. Si no existe: crea contacto nuevo con todos los campos
-4. Si existe: actualiza datos
-5. Asigna al pipeline "Demo Leads" en etapa "Demo Enviada"
-6. Despues de UJ-002: actualiza custom fields con agent_id y demo_link
+1. n8n receives the form data
+2. Looks up an existing contact in GHL by email
+3. If it doesn't exist: creates a new contact with all fields
+4. If it exists: updates the data
+5. Assigns it to the "Demo Leads" pipeline at the "Demo Sent" stage
+6. After UJ-002: updates custom fields with agent_id and demo_link
 
 ### Error paths
-- GHL API error: reintentar, notificar a Rocio
-- Contacto duplicado: merge o update
+- GHL API error: retry, notify Rocio
+- Duplicate contact: merge or update
 
 ### Acceptance criteria
-- [ ] Lead aparece en GHL en < 1 minuto
-- [ ] Custom fields agent_id y demo_link estan poblados
-- [ ] Pipeline "Demo Leads" muestra el lead en etapa correcta
-- [ ] Datos del formulario completos en el contacto
+- [ ] Lead appears in GHL in < 1 minute
+- [ ] agent_id and demo_link custom fields are populated
+- [ ] "Demo Leads" pipeline shows the lead at the correct stage
+- [ ] Form data is complete on the contact
 
 ### Security checklist
-- [ ] GHL API key en n8n credentials
-- [ ] No exponer GHL IDs al frontend
+- [ ] GHL API key in n8n credentials
+- [ ] Do not expose GHL IDs to the frontend
 
 ---
 
-## UJ-005: Nurturing 48h
+## UJ-005: 48h nurturing
 
 **Milestone:** M2
-**Actor:** GHL automatico
-**Trigger:** 48h sin llamada agendada despues de enviar demo
-**Preconditions:** UJ-004 completado, secuencia de nurturing configurada en GHL
+**Actor:** Automatic GHL
+**Trigger:** 48h with no call booked after the demo was sent
+**Preconditions:** UJ-004 completed, nurturing sequence configured in GHL
 
 ### Happy path
-1. GHL detecta que han pasado 48h desde "Demo Enviada"
-2. No hay actividad de llamada registrada
-3. Mueve lead a etapa "Nurturing"
-4. Arranca secuencia de emails:
-   - Email 1 (48h): "Has probado tu agente? Aqui tienes el link de nuevo"
-   - Email 2 (96h): "Mira lo que otras clinicas estan logrando con IA"
-   - Email 3 (168h): "Ultima oportunidad: agenda una llamada gratuita"
-5. Si el lead agenda llamada en cualquier momento: para la secuencia
+1. GHL detects that 48h have passed since "Demo Sent"
+2. No call activity recorded
+3. Moves the lead to the "Nurturing" stage
+4. Starts the email sequence:
+   - Email 1 (48h): "Have you tried your agent? Here's the link again"
+   - Email 2 (96h): "See what other clinics are achieving with AI"
+   - Email 3 (168h): "Last chance: book a free call"
+5. If the lead books a call at any point: stop the sequence
 
 ### Error paths
-- Lead ya convirtio: verificar estado antes de enviar
-- Email bounce: marcar lead como "email invalido"
+- Lead already converted: verify status before sending
+- Email bounce: mark lead as "invalid email"
 
 ### Acceptance criteria
-- [ ] Secuencia arranca exactamente a las 48h
-- [ ] Se detiene si lead agenda llamada
-- [ ] Emails son profesionales y con branding Axieria
-- [ ] Maximo 3 emails de nurturing
+- [ ] Sequence starts exactly at 48h
+- [ ] Stops if the lead books a call
+- [ ] Emails are professional and carry Axieria branding
+- [ ] Maximum of 3 nurturing emails
 
 ### Security checklist
-- [ ] Opcion de unsubscribe en cada email
-- [ ] Cumplimiento RGPD (consentimiento en formulario)
+- [ ] Unsubscribe option in every email
+- [ ] GDPR compliance (consent on the form)
 
 ---
 
-## UJ-006: Dashboard de leads
+## UJ-006: Leads dashboard
 
 **Milestone:** M2
-**Actor:** Rocio (equipo Axieria)
-**Trigger:** Quiere ver estado de los leads de demo
-**Preconditions:** UJ-004 y UJ-005 funcionando
+**Actor:** Rocio (Axieria team)
+**Trigger:** Wants to see the status of demo leads
+**Preconditions:** UJ-004 and UJ-005 working
 
 ### Happy path
-1. Rocio abre GHL
-2. Va al pipeline "Demo Leads"
-3. Ve leads en columnas: Demo Enviada / Nurturing / Llamada Agendada / Convertido
-4. Puede hacer clic en un lead para ver: datos, link de demo, link de edicion del agente
-5. Puede mover leads manualmente entre etapas
+1. Rocio opens GHL
+2. Goes to the "Demo Leads" pipeline
+3. Sees leads in columns: Demo Sent / Nurturing / Call Booked / Converted
+4. Can click a lead to see: data, demo link, agent edit link
+5. Can move leads manually between stages
 
 ### Error paths
-- Pipeline vacio: verificar que webhook esta activo
-- Custom fields no visibles: configurar vista en GHL
+- Empty pipeline: verify the webhook is active
+- Custom fields not visible: configure the view in GHL
 
 ### Acceptance criteria
-- [ ] Pipeline visible con 4 etapas
-- [ ] Custom fields agent_id y demo_link visibles en contacto
-- [ ] Filtros por fecha y etapa funcionan
-- [ ] Rocio puede mover leads entre etapas
+- [ ] Pipeline visible with 4 stages
+- [ ] agent_id and demo_link custom fields visible on the contact
+- [ ] Filters by date and stage work
+- [ ] Rocio can move leads between stages
 
 ### Security checklist
-- [ ] Solo usuarios autorizados de Axieria acceden al pipeline
-- [ ] edit_link visible solo en GHL, nunca al lead
+- [ ] Only authorized Axieria users can access the pipeline
+- [ ] edit_link visible only in GHL, never to the lead

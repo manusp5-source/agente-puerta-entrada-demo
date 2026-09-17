@@ -1,27 +1,27 @@
 # Architecture — Agente Puerta de Entrada Demo
 
 ## Overview
-Sistema de generacion automatica de agentes de voz para demos comerciales de Axieria. Un formulario web recoge datos del lead, n8n orquesta la creacion del agente via ElevenLabs API, y el lead recibe el link de demo por email. GHL gestiona el pipeline comercial y nurturing.
+Automatic voice agent generation system for Axieria's sales demos. A web form collects lead data, n8n orchestrates agent creation via the ElevenLabs API, and the lead receives the demo link by email. GHL manages the sales pipeline and nurturing.
 
 ## Stack
-- **Frontend**: HTML5 + CSS3 + Vanilla JS — sin framework, deploy instantaneo, maximo rendimiento
-- **Backend**: n8n self-hosted (n8n.manusp.site) — webhooks, HTTP requests, logica de negocio
-- **Voice AI**: ElevenLabs Conversational AI API — creacion de agentes programatica
-- **CRM**: GoHighLevel — pipeline de leads, email sequences, nurturing
-- **Email**: SMTP via n8n o GHL built-in email
+- **Frontend**: HTML5 + CSS3 + Vanilla JS — no framework, instant deploy, maximum performance
+- **Backend**: n8n self-hosted (n8n.manusp.site) — webhooks, HTTP requests, business logic
+- **Voice AI**: ElevenLabs Conversational AI API — programmatic agent creation
+- **CRM**: GoHighLevel — lead pipeline, email sequences, nurturing
+- **Email**: SMTP via n8n or GHL built-in email
 
 ## Module structure
 ```
-frontend/          Landing page premium
-  index.html       Estructura + formulario
-  styles.css       Paleta Axieria (navy/oro/crema)
-  script.js        Validacion + POST al webhook
+frontend/          Premium landing page
+  index.html       Structure + form
+  styles.css       Axieria palette (navy/gold/cream)
+  script.js        Validation + POST to the webhook
 
-n8n/               Workflows exportados
+n8n/               Exported workflows
   workflow-agent-creator.json
 
 prompts/           Templates
-  agent_prompt_template.md   Template parametrizado del system prompt
+  agent_prompt_template.md   Parameterized system prompt template
 ```
 
 ## Data flow

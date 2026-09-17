@@ -1,41 +1,41 @@
-# Setup — Workflow n8n "Axieria Agent Demo Creator"
+# Setup — n8n Workflow "Axieria Agent Demo Creator"
 
-## 1. Importar workflow
+## 1. Import the workflow
 
-1. Abrir n8n.manusp.site
-2. Ir a **Workflows** > **Import from file**
-3. Seleccionar `workflow-agent-creator.json`
+1. Open n8n.manusp.site
+2. Go to **Workflows** > **Import from file**
+3. Select `workflow-agent-creator.json`
 
-## 2. Configurar credenciales
+## 2. Configure credentials
 
 ### ElevenLabs API Key
-1. En n8n: **Settings** > **Credentials** > **Add credential**
-2. Tipo: **Header Auth**
+1. In n8n: **Settings** > **Credentials** > **Add credential**
+2. Type: **Header Auth**
 3. Name: `ElevenLabs API`
 4. Header Name: `xi-api-key`
-5. Header Value: tu API key de ElevenLabs (cuenta contacto@axieria.com)
-6. Guardar
+5. Header Value: your ElevenLabs API key (contacto@axieria.com account)
+6. Save
 
-### Asignar credencial al nodo
-1. Abrir nodo **"ElevenLabs - Create Agent"**
-2. En Authentication: **Generic Credential Type** > **Header Auth**
-3. Seleccionar la credencial "ElevenLabs API" que acabas de crear
+### Assign the credential to the node
+1. Open the **"ElevenLabs - Create Agent"** node
+2. Under Authentication: **Generic Credential Type** > **Header Auth**
+3. Select the "ElevenLabs API" credential you just created
 
-### SMTP (para enviar email)
-1. En n8n: **Settings** > **Credentials** > **Add credential**
-2. Tipo: **SMTP**
-3. Configurar con tu servidor SMTP (o el de GHL)
-4. Asignar al nodo **"Send Demo Email"**
+### SMTP (to send email)
+1. In n8n: **Settings** > **Credentials** > **Add credential**
+2. Type: **SMTP**
+3. Configure with your SMTP server (or GHL's)
+4. Assign to the **"Send Demo Email"** node
 
-## 3. Activar workflow
+## 3. Activate the workflow
 
-1. Abrir el workflow importado
-2. Toggle **Active** (arriba a la derecha)
-3. El webhook queda en: `https://n8n.manusp.site/webhook/agent-demo`
+1. Open the imported workflow
+2. Toggle **Active** (top right)
+3. The webhook will be available at: `https://n8n.manusp.site/webhook/agent-demo`
 
-## 4. Testear
+## 4. Test it
 
-### Test rapido con curl
+### Quick test with curl
 ```bash
 curl -X POST https://n8n.manusp.site/webhook/agent-demo \
   -H "Content-Type: application/json" \
@@ -44,54 +44,54 @@ curl -X POST https://n8n.manusp.site/webhook/agent-demo \
     "website": "https://clinicatest.com",
     "contact_name": "Test User",
     "phone": "+34600000000",
-    "email": "TU_EMAIL_REAL@gmail.com",
+    "email": "YOUR_REAL_EMAIL@gmail.com",
     "appointments_per_week": 30,
     "notes": "clinica dental, ortodoncia",
     "source": "landing-demo"
   }'
 ```
 
-### Respuesta esperada
+### Expected response
 ```json
 {"status": "ok", "message": "Recibido. Recibiras tu agente demo en minutos."}
 ```
 
-### Verificar
-1. Revisar ejecucion en n8n (deberia mostrar todos los nodos verdes)
-2. Comprobar que el agente se creo en ElevenLabs (panel > Agents)
-3. Comprobar que llego el email con el link de demo
-4. Abrir el demo_link y hablar con el agente — debe hablar en espanol
+### Verify
+1. Check the execution in n8n (all nodes should show green)
+2. Confirm the agent was created in ElevenLabs (panel > Agents)
+3. Confirm the email with the demo link arrived
+4. Open the demo_link and talk to the agent — it should speak Spanish
 
-## 5. Conectar landing
+## 5. Connect the landing page
 
-El formulario en `frontend/index.html` ya apunta a:
+The form in `frontend/index.html` already points to:
 ```
 https://n8n.manusp.site/webhook/agent-demo
 ```
 
-Para servir la landing:
-- **Opcion A**: Abrir `frontend/index.html` directamente en el navegador (test local)
-- **Opcion B**: Subir carpeta `frontend/` a Netlify/Vercel/GitHub Pages
-- **Opcion C**: Servir desde tu VPS con nginx
+To serve the landing page:
+- **Option A**: Open `frontend/index.html` directly in the browser (local test)
+- **Option B**: Upload the `frontend/` folder to Netlify/Vercel/GitHub Pages
+- **Option C**: Serve it from your VPS with nginx
 
-## 6. Sectores soportados (auto-deteccion)
+## 6. Supported sectors (auto-detection)
 
-El Code node detecta sector automaticamente por keywords en web+notes+nombre:
+The Code node automatically detects the sector via keywords in website+notes+name:
 
-| Keywords | Sector | Uso | Nombre agente |
+| Keywords | Sector | Use case | Agent name |
 |----------|--------|-----|--------------|
-| dental, dentist, ortodoncia | Salud dental | Citas | Laura |
-| inmobil, vivienda, piso | Inmobiliaria | Captacion | Carlos |
-| gym, fitness, deport | Fitness | Captacion | Alex |
-| abogad, legal, despacho | Legal | Captacion | Asistente del despacho |
-| estetic, belleza, spa | Estetica | Citas | Sofia |
-| restauran, comida, bar | Hosteleria | Citas | Maria |
-| tech, software, saas | Tecnologia | Captacion | Asistente de [empresa] |
-| (otros) | Servicios profesionales | Captacion | Ana |
+| dental, dentist, ortodoncia | Dental health | Appointments | Laura |
+| inmobil, vivienda, piso | Real estate | Lead capture | Carlos |
+| gym, fitness, deport | Fitness | Lead capture | Alex |
+| abogad, legal, despacho | Legal | Lead capture | Firm assistant |
+| estetic, belleza, spa | Aesthetics | Appointments | Sofia |
+| restauran, comida, bar | Hospitality | Appointments | Maria |
+| tech, software, saas | Technology | Lead capture | [Company]'s assistant |
+| (other) | Professional services | Lead capture | Ana |
 
-## 7. Nodo de error (ElevenLabs falla)
+## 7. Error node (ElevenLabs fails)
 
-Si ElevenLabs API falla despues de 2 reintentos, el workflow para.
-Para añadir notificacion a Rocio:
-1. Conectar un **Error Trigger** al workflow
-2. Añadir nodo de email/Telegram que notifique el fallo
+If the ElevenLabs API fails after 2 retries, the workflow stops.
+To add a notification to Rocio:
+1. Connect an **Error Trigger** to the workflow
+2. Add an email/Telegram node to notify the failure

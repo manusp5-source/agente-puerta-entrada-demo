@@ -9,44 +9,44 @@
 
 ## Rationale
 
-### HTML/CSS/JS standalone
+### Standalone HTML/CSS/JS
 - Zero build step, zero dependencies
 - Deploy anywhere: GitHub Pages, Netlify, any static host
-- Maximo rendimiento (no framework overhead)
-- Para una landing con un formulario, un framework seria overkill
+- Maximum performance (no framework overhead)
+- For a landing page with a single form, a framework would be overkill
 
 ### n8n self-hosted
-- Ya en stack de Manuel (n8n.manusp.site)
-- Webhooks nativos para recibir formulario
-- HTTP Request nodes para ElevenLabs API
-- Code nodes para generar prompts dinamicos
-- Error handling built-in
-- Visual debugging del flujo
+- Already in Manuel's stack (n8n.manusp.site)
+- Native webhooks to receive the form
+- HTTP Request nodes for the ElevenLabs API
+- Code nodes to generate dynamic prompts
+- Built-in error handling
+- Visual debugging of the flow
 
 ### ElevenLabs API
-- Requerimiento del proyecto (no hay alternativa)
-- API bien documentada para crear agentes programaticamente
-- Voice_id ya testeada para espanol
+- Project requirement (no alternative)
+- Well-documented API for creating agents programmatically
+- Voice_id already tested for Spanish
 
 ### GoHighLevel
-- Ya en uso por Axieria para gestion comercial
-- Pipeline de leads nativo
-- Email sequences para nurturing
-- Evita construir CRM custom
+- Already in use by Axieria for sales management
+- Native lead pipeline
+- Email sequences for nurturing
+- Avoids building a custom CRM
 
 ## Alternatives considered
 
 | Alternative | Why rejected |
 |---|---|
-| React/Next.js frontend | Overkill para un formulario, mas tiempo de setup |
-| FastAPI backend | n8n cubre todo el flujo sin codigo custom |
-| Make.com | Manuel ya tiene n8n self-hosted, no anadir otra herramienta |
-| Supabase/PostgreSQL | No se necesita DB propia, GHL es el store |
-| Twilio para voz | ElevenLabs es el requerimiento especifico |
-| Mailchimp nurturing | GHL ya tiene esta funcionalidad integrada |
+| React/Next.js frontend | Overkill for a single form, more setup time |
+| FastAPI backend | n8n covers the whole flow without custom code |
+| Make.com | Manuel already has n8n self-hosted, no need to add another tool |
+| Supabase/PostgreSQL | No dedicated DB needed, GHL is the store |
+| Twilio for voice | ElevenLabs is the specific requirement |
+| Mailchimp nurturing | GHL already has this functionality built in |
 
 ## Risk factors
-- ElevenLabs API puede cambiar (breaking changes)
-- Creditos ElevenLabs limitados y ya se agotaron una vez
-- GHL API puede tener rate limits no documentados
-- n8n self-hosted requiere uptime del VPS
+- The ElevenLabs API may change (breaking changes)
+- ElevenLabs credits are limited and have already run out once
+- The GHL API may have undocumented rate limits
+- n8n self-hosted requires VPS uptime

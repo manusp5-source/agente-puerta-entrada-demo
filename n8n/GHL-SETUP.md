@@ -1,8 +1,8 @@
-# Setup GHL — Agente Puerta de Entrada Demo
+# GHL Setup — Agente Puerta de Entrada Demo
 
-## 1. Custom Fields en GHL
+## 1. Custom Fields in GHL
 
-Crear estos custom fields en **Settings > Custom Fields > Contacts**:
+Create these custom fields under **Settings > Custom Fields > Contacts**:
 
 | Field Name | Field Key | Type |
 |---|---|---|
@@ -14,151 +14,151 @@ Crear estos custom fields en **Settings > Custom Fields > Contacts**:
 | Sector | sector | Single Line |
 | Notes | notes | Multi Line |
 
-## 2. Pipeline "Demo Leads"
+## 2. "Demo Leads" Pipeline
 
-Crear pipeline en **Opportunities > Pipelines**:
+Create a pipeline under **Opportunities > Pipelines**:
 
-**Nombre:** Demo Leads
+**Name:** Demo Leads
 
-**Stages (en orden):**
-1. **Demo Enviada** — lead recibio link del agente
-2. **Nurturing** — 48h sin respuesta, secuencia activa
-3. **Llamada Agendada** — lead agendo llamada
-4. **Convertido** — lead se convirtio en cliente
-5. **Perdido** — lead no convirtio
+**Stages (in order):**
+1. **Demo Sent** — lead received the agent link
+2. **Nurturing** — 48h with no response, sequence active
+3. **Call Booked** — lead booked a call
+4. **Converted** — lead became a customer
+5. **Lost** — lead did not convert
 
-## 3. Campana de Nurturing
+## 3. Nurturing Campaign
 
-Crear en **Marketing > Campaigns** una campana nueva:
+Create a new campaign under **Marketing > Campaigns**:
 
-**Nombre:** Demo Agent - Nurturing 48h
+**Name:** Demo Agent - Nurturing 48h
 
-### Email 1 — (se envia a las 48h)
-**Subject:** ¿Has probado tu agente de voz, {{contact.firstName}}?
+### Email 1 — (sent at 48h)
+**Subject:** Have you tried your voice agent, {{contact.firstName}}?
 ```
-Hola {{contact.firstName}},
+Hi {{contact.firstName}},
 
-Hace un par de dias creamos un agente de voz personalizado para {{contact.companyName}}.
+A couple of days ago we created a personalized voice agent for {{contact.companyName}}.
 
-Si aun no lo has probado, aqui tienes el enlace directo:
-[Probar mi agente]({{customField.demo_link}})
+If you haven't tried it yet, here's the direct link:
+[Try my agent]({{customField.demo_link}})
 
-Solo tienes que hacer clic y hablar. Tu agente ya sabe sobre tu negocio.
+Just click and start talking. Your agent already knows about your business.
 
-¿Tienes preguntas? Responde a este email o agenda una llamada:
+Have questions? Reply to this email or book a call:
 https://axieria.com/contacto
 
-Un saludo,
-Equipo Axieria
+Best regards,
+The Axieria Team
 ```
 
-### Email 2 — (48h despues del Email 1 = dia 4)
-**Subject:** Lo que otras empresas estan logrando con IA
+### Email 2 — (48h after Email 1 = day 4)
+**Subject:** What other companies are achieving with AI
 ```
-Hola {{contact.firstName}},
+Hi {{contact.firstName}},
 
-Empresas como la tuya estan usando agentes de voz para:
-- Atender llamadas 24/7 sin contratar personal
-- Cualificar leads automaticamente
-- Reducir tiempos de espera a cero
+Companies like yours are using voice agents to:
+- Handle calls 24/7 without hiring staff
+- Qualify leads automatically
+- Cut wait times to zero
 
-Tu agente demo sigue activo:
-[Probar ahora]({{customField.demo_link}})
+Your demo agent is still active:
+[Try it now]({{customField.demo_link}})
 
-¿Quieres ver como funcionaria en produccion para {{contact.companyName}}?
+Want to see how this would work in production for {{contact.companyName}}?
 
-Agenda 15 minutos con nosotros:
+Book 15 minutes with us:
 https://axieria.com/contacto
 
-Un saludo,
-Equipo Axieria
+Best regards,
+The Axieria Team
 ```
 
-### Email 3 — (72h despues del Email 2 = dia 7)
-**Subject:** Ultima oportunidad: tu agente demo de {{contact.companyName}}
+### Email 3 — (72h after Email 2 = day 7)
+**Subject:** Last chance: your {{contact.companyName}} demo agent
 ```
-Hola {{contact.firstName}},
+Hi {{contact.firstName}},
 
-Es la ultima vez que te escribimos sobre tu agente demo.
+This is the last time we'll write to you about your demo agent.
 
-El enlace seguira activo unos dias mas:
-[Probar por ultima vez]({{customField.demo_link}})
+The link will stay active for a few more days:
+[Try it one last time]({{customField.demo_link}})
 
-Si quieres implementarlo de verdad en tu negocio, agenda una llamada gratuita:
+If you'd like to actually implement it in your business, book a free call:
 https://axieria.com/contacto
 
-Si no te interesa, no te molestaremos mas.
+If you're not interested, we won't bother you again.
 
-Un saludo,
-Equipo Axieria
+Best regards,
+The Axieria Team
 ```
 
-### Configuracion de la campana
-- **Trigger:** Manual (n8n lo programa via API)
-- **Stop on reply:** Si
-- **Stop on booking:** Si
-- **Unsubscribe link:** Obligatorio (RGPD)
+### Campaign configuration
+- **Trigger:** Manual (n8n schedules it via API)
+- **Stop on reply:** Yes
+- **Stop on booking:** Yes
+- **Unsubscribe link:** Mandatory (GDPR)
 
-## 4. API Key de GHL
+## 4. GHL API Key
 
-1. En GHL: **Settings > Business Profile > API Keys**
-2. Crear API key con permisos:
+1. In GHL: **Settings > Business Profile > API Keys**
+2. Create an API key with permissions:
    - contacts.write
    - contacts.read
    - opportunities.write
    - opportunities.read
    - campaigns.read
-3. Copiar la API key
+3. Copy the API key
 
-## 5. Credencial en n8n
+## 5. Credential in n8n
 
-1. En n8n: **Settings > Credentials > Add credential**
-2. Tipo: **Header Auth**
+1. In n8n: **Settings > Credentials > Add credential**
+2. Type: **Header Auth**
 3. Name: `GHL API`
 4. Header Name: `Authorization`
-5. Header Value: `Bearer TU_API_KEY_DE_GHL`
-6. Guardar
-7. Asignar a los 3 nodos GHL del workflow:
+5. Header Value: `Bearer YOUR_GHL_API_KEY`
+6. Save
+7. Assign to the 3 GHL nodes in the workflow:
    - GHL - Upsert Contact
    - GHL - Schedule Nurturing 48h
    - GHL - Create Opportunity
 
-## 6. IDs a reemplazar en el workflow
+## 6. IDs to replace in the workflow
 
-Abrir cada nodo GHL y reemplazar estos placeholders:
+Open each GHL node and replace these placeholders:
 
-| Placeholder | Donde encontrarlo |
+| Placeholder | Where to find it |
 |---|---|
 | `{{YOUR_GHL_LOCATION_ID}}` | GHL > Settings > Business Profile > Location ID |
-| `{{YOUR_GHL_PIPELINE_ID}}` | GHL > Opportunities > Pipelines > click en "Demo Leads" > URL contiene el ID |
-| `{{YOUR_GHL_STAGE_DEMO_SENT_ID}}` | GHL API: `GET /opportunities/pipelines` devuelve stages con IDs |
-| `{{YOUR_GHL_NURTURING_CAMPAIGN_ID}}` | GHL > Marketing > Campaigns > click en campana > URL contiene el ID |
+| `{{YOUR_GHL_PIPELINE_ID}}` | GHL > Opportunities > Pipelines > click "Demo Leads" > the ID is in the URL |
+| `{{YOUR_GHL_STAGE_DEMO_SENT_ID}}` | GHL API: `GET /opportunities/pipelines` returns stages with their IDs |
+| `{{YOUR_GHL_NURTURING_CAMPAIGN_ID}}` | GHL > Marketing > Campaigns > click the campaign > the ID is in the URL |
 
-### Obtener IDs via API (rapido)
+### Get IDs via API (quick way)
 ```bash
 # Pipelines + stages
-curl -H "Authorization: Bearer TU_API_KEY" \
-  "https://services.leadconnectorhq.com/opportunities/pipelines?locationId=TU_LOCATION_ID"
+curl -H "Authorization: Bearer YOUR_API_KEY" \
+  "https://services.leadconnectorhq.com/opportunities/pipelines?locationId=YOUR_LOCATION_ID"
 
 # Campaigns
-curl -H "Authorization: Bearer TU_API_KEY" \
-  "https://services.leadconnectorhq.com/campaigns/?locationId=TU_LOCATION_ID"
+curl -H "Authorization: Bearer YOUR_API_KEY" \
+  "https://services.leadconnectorhq.com/campaigns/?locationId=YOUR_LOCATION_ID"
 ```
 
-## 7. Flujo completo GHL
+## 7. Full GHL flow
 
 ```
 Form submit → n8n webhook
-  → ElevenLabs crea agente
-  → En paralelo:
-      1. Email al lead con demo_link
-      2. GHL: upsert contact con custom fields
-          → GHL: create opportunity en "Demo Enviada"
-          → GHL: schedule nurturing a 48h
+  → ElevenLabs creates the agent
+  → In parallel:
+      1. Email to the lead with demo_link
+      2. GHL: upsert contact with custom fields
+          → GHL: create opportunity in "Demo Sent"
+          → GHL: schedule nurturing at 48h
 
-  48h despues (si no hay actividad):
-      → GHL envia Email 1
+  48h later (if no activity):
+      → GHL sends Email 1
       → +48h: Email 2
-      → +72h: Email 3 (ultimo)
-      → Si responde o agenda → para secuencia
+      → +72h: Email 3 (last one)
+      → If they reply or book → stop the sequence
 ```

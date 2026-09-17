@@ -1,23 +1,23 @@
 # Agente Puerta de Entrada Demo — Claude Code Governance
 
 ## Project context
-Sistema automatizado para Axieria: landing premium recoge datos de leads, n8n orquesta la creacion de agentes de voz ElevenLabs personalizados por sector, el lead recibe link de demo por email, y GHL gestiona nurturing si no convierte en 48h.
+Automated system for Axieria: a premium landing page collects lead data, n8n orchestrates the creation of personalized ElevenLabs voice agents by sector, the lead receives a demo link by email, and GHL handles nurturing if they don't convert within 48h.
 
 ## Stack
-- Frontend: HTML + CSS + JS (standalone, paleta Axieria premium)
-- Backend: n8n (self-hosted en n8n.manusp.site)
+- Frontend: HTML + CSS + JS (standalone, premium Axieria palette)
+- Backend: n8n (self-hosted at n8n.manusp.site)
 - Voice agents: ElevenLabs Conversational AI API
 - CRM/Nurturing: GoHighLevel (GHL)
-- Email: n8n SMTP o GHL email
+- Email: n8n SMTP or GHL email
 
 ## Directory map
 - planning/ — requirements, scope, open questions
 - design/ — architecture, data model, API contracts, stack decisions
 - implementation/ — task tracker, user journey definitions
 - docs/ — project memory, decision log
-- frontend/ — landing page + formulario (HTML/CSS/JS)
-- n8n/ — workflow exportado
-- prompts/ — template de prompt para agentes ElevenLabs
+- frontend/ — landing page + form (HTML/CSS/JS)
+- n8n/ — exported workflow
+- prompts/ — prompt template for ElevenLabs agents
 
 ## Rules for this project
 1. Read design/design_summary.md at the start of every session
@@ -27,12 +27,12 @@ Sistema automatizado para Axieria: landing premium recoge datos de leads, n8n or
 5. Add to docs/decision_log.md whenever an architectural decision is made
 6. Never work on UJs until all ITs are complete
 7. Never commit directly to main
-8. ElevenLabs API: SIEMPRE language: "en", prompt en espanol
-9. Voice ID fijo: HYlEvvU9GMan5YdjFYpg
-10. Credenciales ElevenLabs: contacto@axieria.com (NUNCA hardcodear password)
+8. ElevenLabs API: ALWAYS language: "en", prompt in Spanish
+9. Fixed voice ID: HYlEvvU9GMan5YdjFYpg
+10. ElevenLabs credentials: contacto@axieria.com (NEVER hardcode the password)
 
 ## Execution order
-M0 (IT-001 a IT-005) → M1 (UJ-001 a UJ-003) → M2 (UJ-004 a UJ-006)
+M0 (IT-001 to IT-005) → M1 (UJ-001 to UJ-003) → M2 (UJ-004 to UJ-006)
 
 ## Commands to use
 - /start-execution — begin IT phase

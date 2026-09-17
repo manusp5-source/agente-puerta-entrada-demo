@@ -1,24 +1,24 @@
 # Open Questions & Assumptions — Agente Puerta de Entrada Demo
 
 ## Open questions
-1. Dominio de la landing: axieria.com/demo, demo.axieria.com, u otro?
-2. GHL: crear pipeline nuevo "Demo Leads" o usar uno existente?
-3. Template email: HTML premium o texto plano simple?
-4. Limite diario de creacion de agentes (creditos ElevenLabs)?
-5. Integracion WhatsApp para envio de link: incluir en M2 o dejar fuera?
-6. Tracking: UTM parameters en el formulario para atribucion?
+1. Landing page domain: axieria.com/demo, demo.axieria.com, or other?
+2. GHL: create a new "Demo Leads" pipeline or use an existing one?
+3. Email template: premium HTML or simple plain text?
+4. Daily limit on agent creation (ElevenLabs credits)?
+5. WhatsApp integration for sending the link: include in M2 or leave out?
+6. Tracking: UTM parameters on the form for attribution?
 
 ## Assumptions made
-- El voice_id HYlEvvU9GMan5YdjFYpg funciona correctamente con prompts en espanol
-- n8n self-hosted en n8n.manusp.site tiene acceso a internet para llamar API ElevenLabs
-- GHL ya esta configurado con cuenta de Axieria
-- El workaround language: "en" + prompt en espanol sigue funcionando
-- No se necesita autenticacion para acceder al formulario (es publico)
-- Un archivo HTML estatico es suficiente (no necesita SSR ni framework)
+- The voice_id HYlEvvU9GMan5YdjFYpg works correctly with Spanish prompts
+- Self-hosted n8n at n8n.manusp.site has internet access to call the ElevenLabs API
+- GHL is already configured with the Axieria account
+- The language: "en" + Spanish prompt workaround keeps working
+- No authentication is needed to access the form (it's public)
+- A static HTML file is enough (no SSR or framework needed)
 
 ## Decisions deferred
-- WhatsApp como canal adicional de envio (posible M3)
-- Dashboard custom de metricas de uso de agentes
-- Voces personalizadas por sector
-- A/B testing de landing page
-- Integracion con calendario para CTA a llamada
+- WhatsApp as an additional delivery channel (possible M3)
+- Custom dashboard for agent usage metrics
+- Custom voices per sector
+- A/B testing of the landing page
+- Calendar integration for the call CTA
